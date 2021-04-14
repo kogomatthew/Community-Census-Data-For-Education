@@ -13,9 +13,9 @@ require 'check_login.php';
     <meta name="description"
         content="A powerful and conceptual apps base dashboard template that especially build for developers and programmers.">
     <!-- Fav Icon  -->
-    <link rel="shortcut icon" href="./images/favicon.png">
+    <link rel="shortcut icon" href="./images/comm_logo.ico">
     <!-- Page Title  -->
-    <title>Default Dashboard | DashLite Admin Template</title>
+    <title>Community</title>
     <!-- StyleSheets  -->
     <link rel="stylesheet" href="./assets/css/dashlite.css?ver=2.2.0">
     <link id="skin-default" rel="stylesheet" href="./assets/css/theme.css?ver=2.2.0">
@@ -83,106 +83,58 @@ require 'check_login.php';
                                 </div><!-- .nk-block-head -->
                                 <div class="nk-block">
                                     <div class="row g-gs">
-                                        <div class="col-xxl-3 col-sm-6">
+                                        <div class="col-xxl-6 col-sm-6">
                                             <div class="card">
                                                 <div class="nk-ecwg nk-ecwg6">
                                                     <div class="card-inner">
                                                         <div class="card-title-group">
                                                             <div class="card-title">
-                                                                <h6 class="title">Today Orders</h6>
+                                                                <h6 class="title">Number of Households</h6>
                                                             </div>
                                                         </div>
                                                         <div class="data">
-                                                            <div class="data-group">
-                                                                <div class="amount">1,945</div>
-                                                                <div class="nk-ecwg6-ck">
-                                                                    <canvas class="ecommerce-line-chart-s3"
-                                                                        id="todayOrders"></canvas>
-                                                                </div>
-                                                            </div>
-                                                            <div class="info"><span class="change up text-danger"><em
-                                                                        class="icon ni ni-arrow-long-up"></em>4.63%</span><span>
-                                                                    vs. last week</span></div>
+                                                       <div class="data-group">
+                                                                <div class="amount"> 
+                                                        <?php
+                                                             include "dbclass.php";
+                                                                $sql = "SELECT * FROM households";
+                                                                $rows= get_data($sql);
+                                                                echo count($rows);
+                                                             ?>
+                                                              </div>
+                                                              </div>
                                                         </div>
                                                     </div><!-- .card-inner -->
                                                 </div><!-- .nk-ecwg -->
                                             </div><!-- .card -->
                                         </div><!-- .col -->
-                                        <div class="col-xxl-3 col-sm-6">
+                                        <div class="col-xxl-6 col-sm-6">
                                             <div class="card">
                                                 <div class="nk-ecwg nk-ecwg6">
                                                     <div class="card-inner">
                                                         <div class="card-title-group">
                                                             <div class="card-title">
-                                                                <h6 class="title">Today Revenue</h6>
+                                                                <h6 class="title">Number of Children</h6>
                                                             </div>
                                                         </div>
                                                         <div class="data">
                                                             <div class="data-group">
-                                                                <div class="amount">$2,338</div>
-                                                                <div class="nk-ecwg6-ck">
-                                                                    <canvas class="ecommerce-line-chart-s3"
-                                                                        id="todayRevenue"></canvas>
-                                                                </div>
+                                                                <div class="amount"> 
+                                                                <?php 
+                                                                 
+                                                                $sql = "SELECT * FROM children";
+                                                                $rows= get_data($sql);
+                                                                echo count($rows);
+                                                             ?></div>
+                                                               
                                                             </div>
-                                                            <div class="info"><span class="change down text-danger"><em
-                                                                        class="icon ni ni-arrow-long-down"></em>2.34%</span><span>
-                                                                    vs. last week</span></div>
+                                                             
                                                         </div>
                                                     </div><!-- .card-inner -->
                                                 </div><!-- .nk-ecwg -->
                                             </div><!-- .card -->
                                         </div><!-- .col -->
-                                        <div class="col-xxl-3 col-sm-6">
-                                            <div class="card">
-                                                <div class="nk-ecwg nk-ecwg6">
-                                                    <div class="card-inner">
-                                                        <div class="card-title-group">
-                                                            <div class="card-title">
-                                                                <h6 class="title">Today Customers</h6>
-                                                            </div>
-                                                        </div>
-                                                        <div class="data">
-                                                            <div class="data-group">
-                                                                <div class="amount">847</div>
-                                                                <div class="nk-ecwg6-ck">
-                                                                    <canvas class="ecommerce-line-chart-s3"
-                                                                        id="todayCustomers"></canvas>
-                                                                </div>
-                                                            </div>
-                                                            <div class="info"><span class="change up text-danger"><em
-                                                                        class="icon ni ni-arrow-long-up"></em>4.63%</span><span>
-                                                                    vs. last week</span></div>
-                                                        </div>
-                                                    </div><!-- .card-inner -->
-                                                </div><!-- .nk-ecwg -->
-                                            </div><!-- .card -->
-                                        </div><!-- .col -->
-                                        <div class="col-xxl-3 col-sm-6">
-                                            <div class="card">
-                                                <div class="nk-ecwg nk-ecwg6">
-                                                    <div class="card-inner">
-                                                        <div class="card-title-group">
-                                                            <div class="card-title">
-                                                                <h6 class="title">Today Visitors</h6>
-                                                            </div>
-                                                        </div>
-                                                        <div class="data">
-                                                            <div class="data-group">
-                                                                <div class="amount">23,485</div>
-                                                                <div class="nk-ecwg6-ck">
-                                                                    <canvas class="ecommerce-line-chart-s3"
-                                                                        id="todayVisitors"></canvas>
-                                                                </div>
-                                                            </div>
-                                                            <div class="info"><span class="change down text-danger"><em
-                                                                        class="icon ni ni-arrow-long-down"></em>2.34%</span><span>
-                                                                    vs. last week</span></div>
-                                                        </div>
-                                                    </div><!-- .card-inner -->
-                                                </div><!-- .nk-ecwg -->
-                                            </div><!-- .card -->
-                                        </div><!-- .col -->
+                              
                                   
                                         
                                         <div class="col-xxl-12">

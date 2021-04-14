@@ -3,12 +3,31 @@ require 'check_login.php';
 
 require 'dbclass.php';
 
-if (isset($_GET['get_houses'])){
-    $sql = "SELECT * FROM households ;";
+if (isset($_GET['get_children'])){
+    $sql = "SELECT children.* ,households.house_name AS house_name FROM children INNER JOIN households ON households.id=house";
     echo json_encode(get_data($sql));
     exit(0);
 
 }
+if (isset($_POST['submit'])){
+     
+    require 'conn.php';
+    $house_name = $_POST['house_name'];
+    $full_name = $_POST['full_name'];
+    $gender = $_POST['gender'];
+    $dob = $_POST['dob'];
+    $education = $_POST['education'];
+    $sql = "INSERT INTO `children`(`house`, `full_name`, `gender`, `dob`, `education`) VALUES ($house_name,'$full_name','$gender','$dob','$education') ;";
+ 
+    if ($conn->query($sql)===TRUE){
+ 
+        echo  json_encode(['success' => true , 'message' => 'Registered Successfully']);       
+    } else{
+        echo  json_encode(['success' => false , 'message' => 'Not Successful']);
+    }
+    exit(0);
+}
+
 
 ?>
 
@@ -25,7 +44,7 @@ if (isset($_GET['get_houses'])){
     <!-- Fav Icon  -->
     <link rel="shortcut icon" href="./images/favicon.png">
     <!-- Page Title  -->
-    <title>Default Dashboard | DashLite Admin Template</title>
+    <title>Children Records</title>
     <!-- StyleSheets  -->
     <link rel="stylesheet" href="./assets/css/dashlite.css?ver=2.2.0">
     <link id="skin-default" rel="stylesheet" href="./assets/css/theme.css?ver=2.2.0">
@@ -52,7 +71,7 @@ if (isset($_GET['get_houses'])){
                                 <div class="nk-block-head nk-block-head-sm">
                                     <div class="nk-block-between">
                                         <div class="nk-block-head-content">
-                                            <h3 class="nk-block-title page-title">Households</h3>
+                                            <h3 class="nk-block-title page-title">Children</h3>
                                         </div><!-- .nk-block-head-content -->
                                         <div class="nk-block-head-content">
                                             <div class="toggle-wrap nk-block-tools-toggle">
@@ -71,9 +90,8 @@ if (isset($_GET['get_houses'])){
                                             <div class="card-inner">
                                                 <div class="card-title-group">
                                                     <div class="card-title">
-                                                        <h6 class="title">Households</h6>
+                                                        <h6 class="title">Children</h6>
                                                     </div>
-
                                                     <a href="javascript:void(0)" onclick="edit_add(false)"
                                                         class="btn btn-success col-md-1 pull-right float-right"><em
                                                             class="icon ni ni-plus "></em> &nbsp; Register</a>
@@ -87,17 +105,16 @@ if (isset($_GET['get_houses'])){
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th>House Name</th>
-                                                                <th>Mother</th>
-                                                                <th>Father</th>
-                                                                <th>Primary Phone No.</th>
-                                                                <th>Alternate Phone No.</th>
-                                                                <th>Date Registered</th>
-                                                                <th>Children</th>
+                                                                <th>House </th>
+                                                                <th>Name</th>
+                                                                <th>Gender</th>
+                                                                <th>DoB</th>
+                                                                <th>Education</th>
+
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody id="households">
+                                                        <tbody id="children">
 
 
                                                         </tbody>
@@ -153,49 +170,67 @@ if (isset($_GET['get_houses'])){
                     <em class="icon ni ni-cross"></em>
                 </a>
                 <div class="modal-header">
-                    <h5 class="modal-title">Register House</h5>
+                    <h5 class="modal-title">Register Children</h5>
                 </div>
                 <div class="modal-body">
-                    <form method="post" id="aeh">
+                    <form method="post" id="children_form">
                         <div class="form-group">
-                            <label class="form-label" for="default-01">House Name</label>
+
+                            <div class="form-group">
+                                <label class="form-label" for="default-01">House </label>
+                                <select class="form-control" name="house_name" id="house_name" required>
+                                    <option selected disabled>Select Household</option>
+                                    <?php
+                                    include "conn.php"; 
+
+                                    $sql="SELECT id,house_name FROM households order by house_name "; 
+                                    
+                                    foreach ($conn->query($sql) as $row){
+                                    echo "<option value=$row[id]>$row[house_name]</option>"; 
+
+
+                                    }
+
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="default-01">Full Name</label>
                             <div class="form-control-wrap">
-                                <input type="text" class="form-control" id="house_name" placeholder="Enter House Name"
+                                <input type="text" class="form-control" id="full_name" placeholder="Enter Full Name"
                                     required>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="default-01">Father</label>
-                            <div class="form-control-wrap">
-                                <input type="text" class="form-control" id="father" placeholder="Enter Father's Name">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="default-01">Mother</label>
-                            <div class="form-control-wrap">
-                                <input type="text" class="form-control" id="mother" placeholder="Enter Mother's Name">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="default-01">Primary Phone No.</label>
-                            <div class="form-control-wrap">
-                                <input type="number" class="form-control" id="primary_phone" placeholder="Enter primary phone number">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="default-01">Alternative Phone No.</label>
-                            <div class="form-control-wrap">
-                                <input type="number" class="form-control" id="alt_phone_no" placeholder="Enter Alternative Phone No">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="default-01">Date Registered</label>
-                            <div class="form-control-wrap">
-                                <input type="date" class="form-control" id="date_reg" placeholder="Enter Date Registered">
-                            </div>
-                        </div>
+                            <label class="form-label" for="default-01">Gender</label>
+                            <select class="form-control" name="gender" id="gender" required>
+                                <option selected disabled value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
 
-                        <button class="btn btn-outline-success float-right save_btn" type="submit">Register</button>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="default-01">Date of Birth</label>
+                            <div class="form-control-wrap">
+                                <input type="date" class="form-control" id="dob" placeholder="Enter Date of Birth"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="default-01">Level of Education</label>
+                            <select class="form-control" name="education" id="education" required>
+                                <option selected disabled value="">Select Level of Education</option>
+                                <option value="Daycare">Daycare</option>
+                                <option value="Primary">Primary</option>
+                                <option value="Secondary">Secondary</option>
+                                <option value="College">College</option>
+                                <option value="University">Male</option>
+
+                            </select>
+                        </div>
+                        <button class="btn btn-outline-success float-right save_btn" id="submit_children" type="submit">Register</button>
                     </form>
 
                 </div>
@@ -213,10 +248,10 @@ if (isset($_GET['get_houses'])){
         crossorigin="anonymous"></script>
 
     <script>
-    var households = []
+    var children = []
     var selected = ''
-    loadHouses = async function() {
-        let resp = await axios.get('households.php?get_houses');
+    loadChildren = async function() {
+        let resp = await axios.get('children.php?get_children');
 
         let rows = ''
         let i = 1
@@ -225,49 +260,96 @@ if (isset($_GET['get_houses'])){
                 `<tr>  
                             <td> ${i++}</td>
                             <td> ${h.house_name}</td>
-                            <td> ${h.father}</td>
-                            <td> ${h.mother}</td>
-                            <td> ${h.phone_no}</td>
-                            <td> ${h.alt_phone_no}</td>
-                            <td> ${h.date_created}</td>
-                            <td class="text-center"><em class="btn icon ni ni-eye-fill show_children" id="${h.id}"></em></td>
-                            <td class="text-center"> <em class="icon ni ni-pen " onclick="edit_add(true, ${h.id})" role="button"></em>  <em class="p-3 icon ni ni-trash text-danger"></em></td>`
+                            <td> ${h.full_name}</td>
+                            <td> ${h.gender}</td>
+                            <td> ${h.dob}</td>
+                            <td> ${h.education}</td>
+                            <td class="text-center"> <em class="icon ni ni-pen " onclick="edit_add(true, ${h.id})" role="button"></em> 
+                             <em class="p-3 icon ni ni-trash text-danger"  onclick="deletep(${h.id})" role="button"></em></td>`
         })
 
-        document.getElementById('households').innerHTML = rows
-        households = resp.data;
+        document.getElementById('children').innerHTML = rows
+        children = resp.data;
 
     }
 
     load = async function() {
-        await loadHouses()
+        await loadChildren()
     }
 
     load()
 
     edit_add = (edit = false, id = 0) => {
         if (edit) {
-            var household = households.find(r => r.id == id);
+            var child= children.find(r => r.id == id);
 
             selected = id
 
             //
-            Object.keys(household).forEach(key => {
-                $('#' + key).val(household[key])
-                console.log(key)
+            Object.keys(child).forEach(key => {
+                $('#' + key).val(child[key])
+            
             })
 
-
             $('#edit_add_modal').modal('show');
-            console.log(household)
+            console.log(child)
 
 
         } else {
-            $('#aeh')[0].reset();
+            $('#children_form')[0].reset();
             $('#edit_add_modal').modal('show');
 
         }
     }
+   
+
+deletep =async (id)=>{
+    var child= children.find(r => r.id == id);
+
+            selected = id
+
+            Object.keys(child).forEach(key => {
+                $('#' + key).val(child[key])
+            })
+     var id=child.id
+ var fd=new FormData();
+ fd.append("id",id)
+   let resp = await axios.post('delete_child.php',fd);
+   console.log(resp.data)
+   NioApp.Toast(resp.data.message, resp.data.success ? 'success' : 'error', {
+            position: 'top-right'
+        });
+if(resp.data.success){
+    
+}
+}
+    
+    $("#children_form").submit(async function(e){
+        e.preventDefault();
+        var house_name = document.getElementById("house_name").value;
+        var full_name = document.getElementById("full_name").value;
+        var gender = document.getElementById("gender").value;
+        var dob = document.getElementById("dob").value;
+        var education = document.getElementById("education").value;
+        let fd = new FormData();
+        fd.append("house_name", house_name)
+        fd.append("full_name", full_name)
+        fd.append("gender", gender)
+        fd.append("dob", dob)
+        fd.append("education", education)
+        fd.append("submit", 1)
+        let resp = await axios.post('children.php', fd);
+        console.log(resp.data);
+
+        NioApp.Toast(resp.data.message, resp.data.success ? 'success' : 'error', {
+            position: 'top-right'
+        });
+        if (resp.data.success) {
+            $('#children_form')[0].reset();
+        }
+
+
+    })
     </script>
 </body>
 
