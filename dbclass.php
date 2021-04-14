@@ -1,19 +1,21 @@
 <?php
-
+date_default_timezone_set("Africa/Nairobi");
 require "conn.php";  
+$last_id = '';
 
 function execute($sql){     
- 
-    if ($GLOBALS['conn']->query($sql) === TRUE) {
+   $db = $GLOBALS['conn'];
+    if ($db->query($sql) === TRUE) {
+      $GLOBALS['last_id']= $db->insert_id;      
       return true;
     } else {
-      return $conn->error;
+      return $db->error;
     }
 }
 
-function get_data($sql){
-  
-  $result = $GLOBALS['conn']->query($sql);     
+function get_data($sql){  
+  $db = $GLOBALS['conn'];
+  $result = $db->query($sql);     
   return $result->fetch_all(MYSQLI_ASSOC);
 }
 
