@@ -220,30 +220,12 @@ if(isset($_POST['del_h'])){
                                 <input type="text" class="form-control" id="mother" placeholder="Enter Mother's Name">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label" for="default-01">Primary Phone No.</label>
-                            <div class="form-control-wrap">
-                                <input type="number" class="form-control" id="primary_phone" placeholder="Enter primary phone number">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="default-01">Alternative Phone No.</label>
-                            <div class="form-control-wrap">
-                                <input type="number" class="form-control" id="alt_phone_no" placeholder="Enter Alternative Phone No">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="default-01">Date Registered</label>
-                            <div class="form-control-wrap">
-
-                                <input type="text" class="form-control" id="mother" placeholder="Enter Mother's Name">
-                            </div>
-                        </div>
+                       
                         <div class="form-group">
                             <label class="form-label" for="default-01">Primary Phone No.</label>
                             <div class="form-control-wrap">
                                 <input type="text" class="form-control" id="phone_no" max="10" min="10"
-                                    placeholder="Enter Mother's Name">
+                                    placeholder="Enter Primary Phone No">
                             </div>
                         </div>
 
@@ -251,7 +233,7 @@ if(isset($_POST['del_h'])){
                             <label class="form-label" for="default-01">Secondary Phone No.</label>
                             <div class="form-control-wrap">
                                 <input type="text" class="form-control" id="alt_phone_no" min="10" max="10"
-                                    placeholder="Enter Mother's Name">
+                                    placeholder="Enter Secondary Phone No">
  
                             </div>
                         </div>

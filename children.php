@@ -93,7 +93,7 @@ if (isset($_POST['submit'])){
                                                         <h6 class="title">Children</h6>
                                                     </div>
                                                     <a href="javascript:void(0)" onclick="edit_add(false)"
-                                                        class="btn btn-success col-md-1 pull-right float-right"><em
+                                                        class="btn btn-success   pull-right float-right"><em
                                                             class="icon ni ni-plus "></em> &nbsp; Register</a>
                                                 </div>
                                             </div>
@@ -178,9 +178,12 @@ if (isset($_POST['submit'])){
 
                             <div class="form-group">
                                 <label class="form-label" for="default-01">House </label>
-                                <select class="form-control" name="house_name" id="house_name" required>
-                                    <option selected disabled>Select Household</option>
-                                    <?php
+                                <div class="form-control-wrap">
+
+                                    <select class="form-control form-select" name="house_name" id="house_name"
+                                        data-search="on" required>
+                                        <option selected disabled>Select Household</option>
+                                        <?php
                                     include "conn.php"; 
 
                                     $sql="SELECT id,house_name FROM households order by house_name "; 
@@ -192,45 +195,56 @@ if (isset($_POST['submit'])){
                                     }
 
                                     ?>
-                                </select>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="default-01">Full Name</label>
                             <div class="form-control-wrap">
-                                <input type="text" class="form-control" id="full_name" placeholder="Enter Full Name"
-                                    required>
+                                <div class="form-control-wrap">
+                                    <input type="text" class="form-control" id="full_name" placeholder="Enter Full Name"
+                                        required>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="default-01">Gender</label>
-                            <select class="form-control" name="gender" id="gender" required>
-                                <option selected disabled value="">Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
 
-                            </select>
+                            <div class="form-control-wrap">
+                                <select class="form-control" name="gender" id="gender" required>
+                                    <option selected disabled value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="default-01">Date of Birth</label>
                             <div class="form-control-wrap">
-                                <input type="date" class="form-control" id="dob" placeholder="Enter Date of Birth"
-                                    required>
+                                <div class="form-control-wrap">
+                                    <input type="date" class="form-control" id="dob" placeholder="Enter Date of Birth"
+                                        required>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="default-01">Level of Education</label>
-                            <select class="form-control" name="education" id="education" required>
-                                <option selected disabled value="">Select Level of Education</option>
-                                <option value="Daycare">Daycare</option>
-                                <option value="Primary">Primary</option>
-                                <option value="Secondary">Secondary</option>
-                                <option value="College">College</option>
-                                <option value="University">Male</option>
+                            <div class="form-control-wrap">
+                                <select class="form-control form-select" name="education" id="education" required>
+                                    <option selected disabled value="">Select Level of Education</option>
+                                    <option value="Daycare">Daycare</option>
+                                    <option value="Primary">Primary</option>
+                                    <option value="Secondary">Secondary</option>
+                                    <option value="College">College</option>
+                                    <option value="University">Male</option>
 
-                            </select>
+                                </select>
+                            </div>
                         </div>
-                        <button class="btn btn-outline-success float-right save_btn" id="submit_children" type="submit">Register</button>
+                        <button class="btn btn-outline-success float-right save_btn" id="submit_children"
+                            type="submit">Register</button>
                     </form>
 
                 </div>
@@ -245,6 +259,10 @@ if (isset($_POST['submit'])){
     <script src="./assets/js/charts/chart-ecommerce.js?ver=2.2.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
         integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
+        crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
         crossorigin="anonymous"></script>
 
     <script>
@@ -281,14 +299,14 @@ if (isset($_POST['submit'])){
 
     edit_add = (edit = false, id = 0) => {
         if (edit) {
-            var child= children.find(r => r.id == id);
+            var child = children.find(r => r.id == id);
 
             selected = id
 
             //
             Object.keys(child).forEach(key => {
                 $('#' + key).val(child[key])
-            
+
             })
 
             $('#edit_add_modal').modal('show');
@@ -301,30 +319,36 @@ if (isset($_POST['submit'])){
 
         }
     }
-   
 
-deletep =async (id)=>{
-    var child= children.find(r => r.id == id);
 
-            selected = id
+    deletep = async (id) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                var fd = new FormData();
+                fd.append("id", id)
+                let resp = await axios.post('delete_child.php', fd);
 
-            Object.keys(child).forEach(key => {
-                $('#' + key).val(child[key])
-            })
-     var id=child.id
- var fd=new FormData();
- fd.append("id",id)
-   let resp = await axios.post('delete_child.php',fd);
-   console.log(resp.data)
-   NioApp.Toast(resp.data.message, resp.data.success ? 'success' : 'error', {
-            position: 'top-right'
-        });
-if(resp.data.success){
-    
-}
-}
-    
-    $("#children_form").submit(async function(e){
+                NioApp.Toast(resp.data.message, resp.data.success ? 'success' : 'error', {
+                    position: 'top-right'
+                });
+
+                loadChildren()
+
+            }
+        })
+
+
+    }
+
+    $("#children_form").submit(async function(e) {
         e.preventDefault();
         var house_name = document.getElementById("house_name").value;
         var full_name = document.getElementById("full_name").value;
@@ -339,12 +363,13 @@ if(resp.data.success){
         fd.append("education", education)
         fd.append("submit", 1)
         let resp = await axios.post('children.php', fd);
-        console.log(resp.data);
+
 
         NioApp.Toast(resp.data.message, resp.data.success ? 'success' : 'error', {
             position: 'top-right'
         });
         if (resp.data.success) {
+            loadChildren()
             $('#children_form')[0].reset();
         }
 
