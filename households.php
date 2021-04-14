@@ -72,10 +72,15 @@ if (isset($_GET['get_houses'])){
                                                     <div class="card-title">
                                                         <h6 class="title">Households</h6>
                                                     </div>
+
+                                                    <a href="javascript:void(0)" onclick="edit_add(false)"
+                                                        class="btn btn-success col-md-1 pull-right float-right"><em
+                                                            class="icon ni ni-plus "></em> &nbsp; Register</a>
                                                 </div>
                                             </div>
 
                                             <div class="card card-preview">
+
                                                 <div class="card-inner">
                                                     <table class="datatable-init table ">
                                                         <thead>
@@ -136,11 +141,11 @@ if (isset($_GET['get_houses'])){
     <!-- JavaScript -->
 
 
-        <!-- Modal Trigger Code -->
+    <!-- Modal Trigger Code -->
     <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDefault">Modal Default</button> -->
 
     <!-- Modal Content Code -->
-    <div class="modal fade" tabindex="-1" id="modalDefault">
+    <div class="modal fade" tabindex="-1" id="edit_add_modal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <a href="#" class="close" data-dismiss="modal" aria-label="Close">
@@ -150,18 +155,29 @@ if (isset($_GET['get_houses'])){
                     <h5 class="modal-title">Register House</h5>
                 </div>
                 <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label" for="default-01">Input text label</label>
-                    <div class="form-control-wrap">
-                        <input type="text" class="form-control" id="default-01" placeholder="Input placeholder">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="default-02">Textarea label</label>
-                    <div class="form-control-wrap">
-                        <textarea class="form-control" id="default-textarea">Large text area content</textarea>
-                    </div>
-                </div>
+                    <form method="post" id="aeh">
+                        <div class="form-group">
+                            <label class="form-label" for="default-01">House Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="house_name" placeholder="Enter House Name" required>                                
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="default-01">Father</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="father" placeholder="Enter Father's Name" >                                
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="default-01">Father</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="mother" placeholder="Enter Mother's Name" >                                
+                            </div>
+                        </div>
+
+                        <button class="btn btn-outline-success float-right save_btn" type="submit">Register</button>
+                    </form>
+
                 </div>
                 <div class="modal-footer bg-light">
                     <!-- <span class="sub-text">Modal Footer Text</span> -->
@@ -177,14 +193,16 @@ if (isset($_GET['get_houses'])){
         crossorigin="anonymous"></script>
 
     <script>
+    var households = []
+    var selected = ''
+    loadHouses = async function() {
+        let resp = await axios.get('households.php?get_houses');
 
-        loadHouses = async function() {
-            let resp = await axios.get('households.php?get_houses');
-
-            let rows = ''
-            let i = 1
-            resp.data.forEach(h => {
-                rows +=`<tr>  
+        let rows = ''
+        let i = 1
+        resp.data.forEach(h => {
+            rows +=
+                `<tr>  
                             <td> ${i++}</td>
                             <td> ${h.house_name}</td>
                             <td> ${h.father}</td>
@@ -193,21 +211,43 @@ if (isset($_GET['get_houses'])){
                             <td> ${h.alt_phone_no}</td>
                             <td> ${h.date_created}</td>
                             <td class="text-center"><em class="btn icon ni ni-eye-fill show_children" id="${h.id}"></em></td>
-                            <td class="text-center"> <em class="icon ni ni-pen" role="button"></em>  <em class="p-3 icon ni ni-trash text-danger"></em></td>`
+                            <td class="text-center"> <em class="icon ni ni-pen " onclick="edit_add(true, ${h.id})" role="button"></em>  <em class="p-3 icon ni ni-trash text-danger"></em></td>`
+        })
+
+        document.getElementById('households').innerHTML = rows
+        households = resp.data;
+
+    }
+
+    load = async function() {
+        await loadHouses()
+    }
+
+    load()
+
+    edit_add = (edit = false, id = 0) => {
+        if (edit) {
+            var household = households.find(r => r.id == id);
+
+            selected = id
+
+            //
+            Object.keys(household).forEach(key => {
+                $('#' + key).val(household[key])
+                console.log(key)
             })
 
-            document.getElementById('households').innerHTML = rows
+
+            $('#edit_add_modal').modal('show');
+            console.log(household)
+
+
+        } else {
+            $('#aeh')[0].reset();
+            $('#edit_add_modal').modal('show');
 
         }
-
-        load = async function() {
-            await loadHouses()
-
-        }
-
-        load()
-
-
+    }
     </script>
 </body>
 
