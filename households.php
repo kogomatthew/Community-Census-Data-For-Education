@@ -9,6 +9,56 @@ if (isset($_GET['get_houses'])){
     exit(0);
 
 }
+
+if(isset($_GET['show_children'])){
+    $house = $_GET['id'];
+    $sql = "SELECT * FROM children WHERE house = '$house';";
+    $rows = get_data($sql);
+    echo json_encode($rows);
+    exit(0); 
+}
+
+if (isset($_POST['add_edit'])) {
+    $house_name = $_POST['house_name'];
+    $father = $_POST['father'];
+    $mother = $_POST['mother'];
+    $is_new = $_POST['is_new'];
+    $alt_phone_no = $_POST['alt_phone_no'];
+    $phone_no = $_POST['phone_no'];
+    $date_time = date('Y-m-d H:i:s');
+   
+    if($is_new == 1){
+        $sql = "INSERT INTO `households` (`house_name`, `mother`, `father`, `phone_no`, `alt_phone_no`, `date_created`) 
+        VALUES ('$house_name', '$mother', '$father', '$phone_no', '$alt_phone_no', '$date_time');";        
+        
+    }else { 
+        $id = $_POST["id"];
+        $sql = "UPDATE households SET house_name = '$house_name', mother = '$mother', father = '$father',alt_phone_no = '$alt_phone_no', phone_no = '$phone_no' WHERE id = '$id';";
+      
+        
+    }
+ 
+
+    $res= execute($sql);
+    if($res){
+        echo json_encode(['success' => true , 'message' => $is_new  == 1? 'Household Succesfully Registered' : 'Household Updated Succesfully' ,'id' =>  $GLOBALS['last_id']]);
+    }else{
+        echo json_encode(['success' => false , 'message' => 'Error ! '.$res]);
+    }
+    
+    exit(0);
+}
+
+
+if(isset($_POST['del_h'])){
+
+    $id = $_POST['id'];
+    $sql = "DELETE FROM `households` WHERE `id` = $id ;";
+    $res= execute($sql);
+    echo  json_encode(['success' => true, 'message' => 'Deleted Successfully']);
+    exit(0);
+
+}
 ?>
 
 
@@ -24,7 +74,7 @@ if (isset($_GET['get_houses'])){
     <!-- Fav Icon  -->
     <link rel="shortcut icon" href="./images/favicon.png">
     <!-- Page Title  -->
-    <title>Default Dashboard | DashLite Admin Template</title>
+    <title>Community | Households</title>
     <!-- StyleSheets  -->
     <link rel="stylesheet" href="./assets/css/dashlite.css?ver=2.2.0">
     <link id="skin-default" rel="stylesheet" href="./assets/css/theme.css?ver=2.2.0">
@@ -73,9 +123,9 @@ if (isset($_GET['get_houses'])){
                                                         <h6 class="title">Households</h6>
                                                     </div>
 
-                                                    <a href="javascript:void(0)" onclick="edit_add(false)"
-                                                        class="btn btn-success col-md-1 pull-right float-right"><em
-                                                            class="icon ni ni-plus "></em> &nbsp; Register</a>
+                                                    <button href="javascript:void(0)" onclick="load_house_modal(false)"
+                                                        class="btn btn-success pull-right float-right"><em
+                                                            class="icon ni ni-plus "></em> &nbsp; Register</button>
                                                 </div>
                                             </div>
 
@@ -97,8 +147,6 @@ if (isset($_GET['get_houses'])){
                                                             </tr>
                                                         </thead>
                                                         <tbody id="households">
-
-
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -140,11 +188,6 @@ if (isset($_GET['get_houses'])){
     <!-- app-root @e -->
     <!-- JavaScript -->
 
-
-    <!-- Modal Trigger Code -->
-    <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDefault">Modal Default</button> -->
-
-    <!-- Modal Content Code -->
     <div class="modal fade" tabindex="-1" id="edit_add_modal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -152,26 +195,42 @@ if (isset($_GET['get_houses'])){
                     <em class="icon ni ni-cross"></em>
                 </a>
                 <div class="modal-header">
-                    <h5 class="modal-title">Register House</h5>
+                    <h5 class="modal-title mdl_title">Register House</h5>
                 </div>
                 <div class="modal-body">
                     <form method="post" id="aeh">
                         <div class="form-group">
                             <label class="form-label" for="default-01">House Name</label>
                             <div class="form-control-wrap">
-                                <input type="text" class="form-control" id="house_name" placeholder="Enter House Name" required>                                
+                                <input type="text" class="form-control" id="house_name" placeholder="Enter House Name"
+                                    required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="default-01">Father</label>
                             <div class="form-control-wrap">
-                                <input type="text" class="form-control" id="father" placeholder="Enter Father's Name" >                                
+                                <input type="text" class="form-control" id="father" placeholder="Enter Father's Name">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="default-01">Father</label>
                             <div class="form-control-wrap">
-                                <input type="text" class="form-control" id="mother" placeholder="Enter Mother's Name" >                                
+                                <input type="text" class="form-control" id="mother" placeholder="Enter Mother's Name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="default-01">Primary Phone No.</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="phone_no" max="10" min="10"
+                                    placeholder="Enter Mother's Name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="default-01">Secondary Phone No.</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="alt_phone_no" min="10" max="10"
+                                    placeholder="Enter Mother's Name">
                             </div>
                         </div>
 
@@ -185,22 +244,78 @@ if (isset($_GET['get_houses'])){
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" tabindex="-1" id="children_modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+                <div class="modal-header">
+                    <h5 class="modal-title">Children</h5>
+                </div>
+                <div class="modal-body">
+                    <table class="datatable-init2 table  ">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Gender</th>
+                                <th>Age</th>
+                                <th>Ed. Level</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="children">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer bg-light">
+                    <!-- <span class="sub-text">Modal Footer Text</span> -->
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="./assets/js/bundle.js?ver=2.2.0"></script>
     <script src="./assets/js/scripts.js?ver=2.2.0"></script>
     <script src="./assets/js/charts/chart-ecommerce.js?ver=2.2.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
         integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
         crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
+        integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ=="
+        crossorigin="anonymous"></script>
+
 
     <script>
     var households = []
     var selected = ''
-    loadHouses = async function() {
-        let resp = await axios.get('households.php?get_houses');
+
+    var Obj = {
+        "house_name": $('#house_name'),
+        "father": $('#father'),
+        "mother": $('#mother'),
+        "alt_phone_no": $('#alt_phone_no'),
+        "phone_no": $('#phone_no')
+
+    }
+    var is_new = 0
+    loadHouses = async function(fetch = true) {
+        if (fetch) {
+            let resp = await axios.get('households.php?get_houses');
+            households = resp.data;
+        }
+
 
         let rows = ''
         let i = 1
-        resp.data.forEach(h => {
+
+
+        households.forEach(h => {
             rows +=
                 `<tr>  
                             <td> ${i++}</td>
@@ -209,13 +324,13 @@ if (isset($_GET['get_houses'])){
                             <td> ${h.mother}</td>
                             <td> ${h.phone_no}</td>
                             <td> ${h.alt_phone_no}</td>
-                            <td> ${h.date_created}</td>
-                            <td class="text-center"><em class="btn icon ni ni-eye-fill show_children" id="${h.id}"></em></td>
-                            <td class="text-center"> <em class="icon ni ni-pen " onclick="edit_add(true, ${h.id})" role="button"></em>  <em class="p-3 icon ni ni-trash text-danger"></em></td>`
+                            <td> ${moment(h.date_created).format('MMMM Do YYYY, h:mm:ss') }</td>
+                            <td class="text-center"><em class="btn icon ni ni-eye-fill " onclick="show_children(${h.id})"></em></td>
+                            <td class="text-center"> <em class="icon ni ni-pen " onclick="load_house_modal(true, ${h.id})" role="button"></em>  <em class="p-3 icon ni ni-trash text-danger " onclick="deleteh(${h.id})" role="button"></em></td>`
         })
+      
+        document.getElementById('households').innerHTML = rows      
 
-        document.getElementById('households').innerHTML = rows
-        households = resp.data;
 
     }
 
@@ -225,27 +340,133 @@ if (isset($_GET['get_houses'])){
 
     load()
 
-    edit_add = (edit = false, id = 0) => {
+    load_house_modal = (edit = false, id = 0) => {
         if (edit) {
-            var household = households.find(r => r.id == id);
+            is_new = 0
+            selected = households.find(r => r.id == id);
 
-            selected = id
+            $('.save_btn').html('Update')
+            $('.mdl_title').html(selected.house_name)
 
             //
-            Object.keys(household).forEach(key => {
-                $('#' + key).val(household[key])
-                console.log(key)
+            Object.keys(selected).forEach(key => {
+                $('#' + key).val(selected[key])
+
             })
 
-
             $('#edit_add_modal').modal('show');
-            console.log(household)
 
 
         } else {
+            $('.save_btn').html('Register')
+            $('.mdl_title').html('New House Registration')
+            is_new = 1
             $('#aeh')[0].reset();
             $('#edit_add_modal').modal('show');
 
+        }
+    }
+
+
+
+    $("#aeh").on('submit', async function(e) {
+        e.preventDefault();
+        let fd = new FormData();
+        let new_val = {}
+        Object.keys(Obj).forEach(el => {
+            fd.append(el, Obj[el].val());
+            new_val[el] = Obj[el].val();
+
+        })
+
+        fd.append("is_new", is_new)
+        fd.append("id", selected.id)
+        fd.append("add_edit", 1)
+
+        let resp = await axios.post('households.php', fd);
+
+
+        NioApp.Toast(resp.data.message, resp.data.success ? 'success' : 'error', {
+            position: 'top-right'
+        });
+
+        if (resp.data.success) {
+
+            if (is_new == 0) {
+
+                households = households.filter(h => h.id != selected.id);
+                new_val.id = selected.id
+                new_val.date_created = selected.date_created
+
+
+            } else {
+                new_val.date_created = new Date()
+                new_val.id = resp.data.id;
+
+            }
+
+            households.push(new_val)
+            households = _.sortBy(households, ['id']);
+            loadHouses(false)
+
+            $('#edit_add_modal').modal('hide');
+
+        }
+
+
+    });
+
+    deleteh = async (id) => {
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                let fd = new FormData();
+                fd.append('del_h', 1);
+                fd.append('id', id);
+                let resp = await axios.post('households.php', fd)
+                $('#edit_add_modal').modal('hide');
+                households = households.filter(h => h.id != id);
+                loadHouses(false)
+            } 
+        })
+
+     
+
+    }
+
+    show_children = async (house_id) => {
+
+        let resp = await axios.get('households.php?show_children&id=' + house_id)
+        if (resp.data.length < 1) {
+            NioApp.Toast('Selected Home has no Children', 'error', {
+                position: 'top-right'
+            });
+
+        } else {
+
+            let rows = ''
+            let i = 1
+            resp.data.forEach(c => {
+                rows += `<tr>
+                            <td> ${i++}</td>
+                            <td>${c.full_name} </td>
+                            <td>${c.gender} </td>
+                            <td>${moment().diff(moment(c.dob, "DD-MM-YYYY"), 'years')} </td>
+                            <td> ${c.education}</td>
+                        </tr>`
+            })
+
+             
+            $('#children').html(rows)          
+            $('#children_modal').modal('show');
         }
     }
     </script>
