@@ -1,11 +1,10 @@
 <div class="nk-sidebar nk-sidebar-fixed is-light " data-content="sidebarMenu">
                 <div class="nk-sidebar-element nk-sidebar-head">
-                    <div class="nk-sidebar-brand">
-                        <a href="html/index.html" class="logo-link nk-sidebar-logo">                           
-
-
-                            <img class="logo-small logo-img logo-img-small" src="./images/primetech.png"
+                    <div class="nk-sidebar-brand"> 
+                        <a href="index.php" class="logo-link nk-sidebar-logo">                      
+                             <img class="logo-small logo-img logo-img-small" src="./images/primetech.png"
                                 srcset="./images/primetech.png 2x" alt="logo-small">
+ 
                         </a>
                     </div>
                     <div class="nk-menu-trigger mr-n2">

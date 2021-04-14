@@ -10,6 +10,7 @@ if (isset($_GET['get_houses'])){
 
 }
 
+ 
 if(isset($_GET['show_children'])){
     $house = $_GET['id'];
     $sql = "SELECT * FROM children WHERE house = '$house';";
@@ -59,6 +60,7 @@ if(isset($_POST['del_h'])){
     exit(0);
 
 }
+ 
 ?>
 
 
@@ -213,8 +215,27 @@ if(isset($_POST['del_h'])){
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="default-01">Father</label>
+                            <label class="form-label" for="default-01">Mother</label>
                             <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="mother" placeholder="Enter Mother's Name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="default-01">Primary Phone No.</label>
+                            <div class="form-control-wrap">
+                                <input type="number" class="form-control" id="primary_phone" placeholder="Enter primary phone number">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="default-01">Alternative Phone No.</label>
+                            <div class="form-control-wrap">
+                                <input type="number" class="form-control" id="alt_phone_no" placeholder="Enter Alternative Phone No">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="default-01">Date Registered</label>
+                            <div class="form-control-wrap">
+
                                 <input type="text" class="form-control" id="mother" placeholder="Enter Mother's Name">
                             </div>
                         </div>
@@ -231,6 +252,7 @@ if(isset($_POST['del_h'])){
                             <div class="form-control-wrap">
                                 <input type="text" class="form-control" id="alt_phone_no" min="10" max="10"
                                     placeholder="Enter Mother's Name">
+ 
                             </div>
                         </div>
 
